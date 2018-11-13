@@ -6,7 +6,7 @@ Module ID: qSchlagDenBomb
 
 Created by: JerryEris
 
-Manual (to be) available here: https://ktane.timwi.de/HTML/Schlag den Bomb.html
+Manual (to be) available here: https://ktane.timwi.de/HTML/Schlag%20den%20Bomb.html
 --
 Build 1.0 notes:
 - Initial release
