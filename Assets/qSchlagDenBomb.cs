@@ -21,7 +21,7 @@ public class qSchlagDenBomb : MonoBehaviour
     public MeshRenderer[] meshUn;
 
     public KMBombInfo bomb;
-    public new KMAudio audio;
+    //public new KMAudio audio;
 
     string[] gameType = new string[15];
     string[] contender = new string[27] 
@@ -80,7 +80,7 @@ public class qSchlagDenBomb : MonoBehaviour
     bool pressedAllowed = false;
 
     // TWITCH PLAYS SUPPORT
-    int tpStages;
+    //int tpStages;
     // TWITCH PLAYS SUPPORT
 
     Color[] colory = { new Color(0.05f, 0.05f, 0.05f), new Color(0.95f, 0.95f, 0.95f) };
@@ -137,7 +137,7 @@ public class qSchlagDenBomb : MonoBehaviour
             }
         }
         
-        tpStages = 0;
+        //tpStages = 0;
         contenderNumber = UnityEngine.Random.Range(0, 27);
         //TextMesh contenderText = c.GetComponentInChildren<TextMesh>();
 
@@ -405,7 +405,7 @@ public class qSchlagDenBomb : MonoBehaviour
         bombaScore.text = Convert.ToString(scoreB);
         pressedAllowed = true;
     }
-
+/*
 #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"Press the correct buttons with !{0} press 1 2 3 4 5 with a space in between numbers. You can substitute 'press' with 'p'.";
     private readonly bool TwitchShouldCancelCommand = false;
@@ -454,7 +454,7 @@ public class qSchlagDenBomb : MonoBehaviour
         }
         
     }
-
+    */
     void PressedBomb(int pressedButton)
     {
         curGameState[pressedButton] = "B";

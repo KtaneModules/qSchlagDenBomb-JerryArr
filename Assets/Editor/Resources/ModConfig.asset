@@ -13,7 +13,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: qSchlagDenBomb
   title: Schlag den Bomb
-  description: It's a template
+  description: 'Schlag den Bomb 1.0
+
+    I''m not sure if this is easier or harder than adding hundred-digit numbers...
+
+
+    Module ID: qSchlagDenBomb
+
+
+    Created by: JerryEris
+
+
+    Manual (to be) available here: https://ktane.timwi.de/HTML/Schlag%20den%20Bomb.html'
   version: 1.0
   outputFolder: build
   previewImage: {fileID: 2800000, guid: a0f5de94c360349418611e35fdf4ad8d, type: 3}
