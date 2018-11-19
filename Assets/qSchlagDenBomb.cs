@@ -79,11 +79,16 @@ public class qSchlagDenBomb : MonoBehaviour
 
     bool pressedAllowed = false;
 
-    // TWITCH PLAYS SUPPORT
-    //int tpStages;
-    // TWITCH PLAYS SUPPORT
+    string[] testCharacters = new string[10]
+    {
+        "", "", "", "", "", "", "", "", "", ""
+    };
 
-    Color[] colory = { new Color(0.05f, 0.05f, 0.05f), new Color(0.95f, 0.95f, 0.95f) };
+    // TWITCH PLAYS SUPPORT
+    int tpStages;
+    // TWITCH PLAYS SUPPORT
+    //                           bg is off             bg and unplayed text if bg off          bomb text if bg off      contestant text if bg off
+    Color[] colory = { new Color(0.05f, 0.05f, 0.05f), new Color(0.95f, 0.95f, 0.95f), new Color(.45f, .45f, .9f), new Color(.9f, .3f, .3f) };
 
     void Start()
     {
@@ -93,6 +98,7 @@ public class qSchlagDenBomb : MonoBehaviour
 
     void Init()
     {
+        realUnplayed = testCharacters[1];
         for (int q = 0; q < 15; q++)
         {
             gameType[q] = "X";
@@ -100,7 +106,9 @@ public class qSchlagDenBomb : MonoBehaviour
             unplayedGames[q] = false;
             curGameState[q] = "B";
             meshC[q].material.color = colory[0];
-
+            meshB[q].material.color = colory[1];
+            buttonsB[q].GetComponentInChildren<TextMesh>().color = colory[0];
+            buttonsC[q].GetComponentInChildren<TextMesh>().color = colory[3];
         }
         DumbDelegationThing();
         buttonSubmit.OnInteractEnded += delegate () { PressedSubmit(); buttonSubmit.AddInteractionPunch(0.4f); };
@@ -112,6 +120,10 @@ public class qSchlagDenBomb : MonoBehaviour
         meshUn[1].material.color = colory[0];
         meshUn[2].material.color = colory[0];
         meshUn[3].material.color = colory[0];
+        buttonsU[0].GetComponentInChildren<TextMesh>().color = colory[1];
+        buttonsU[1].GetComponentInChildren<TextMesh>().color = colory[1];
+        buttonsU[2].GetComponentInChildren<TextMesh>().color = colory[1];
+        buttonsU[3].GetComponentInChildren<TextMesh>().color = colory[1];
         numPorts = Math.Min(6, bomb.GetPortCount());
         numBatteries = Math.Min(5, bomb.GetBatteryCount());
         numIndicators = Math.Min(3, bomb.GetIndicators().Count());
@@ -137,7 +149,7 @@ public class qSchlagDenBomb : MonoBehaviour
             }
         }
         
-        //tpStages = 0;
+        tpStages = 0;
         contenderNumber = UnityEngine.Random.Range(0, 27);
         //TextMesh contenderText = c.GetComponentInChildren<TextMesh>();
 
@@ -333,6 +345,7 @@ public class qSchlagDenBomb : MonoBehaviour
             assignsLeft--;
         }
         //Debug.LogFormat("Game order: ");
+        string oddities = "";
         for (int j = 0; j < 15; j++)
         {
             //Debug.LogFormat("Game {0} is {1}", ((j + 1)), gameType[j]);
@@ -340,13 +353,17 @@ public class qSchlagDenBomb : MonoBehaviour
             //Debug.Log("Game " + (j + 1) + " is " + gameType[j]);
             if (gameType[j] == "O")
             {
+                oddities = oddities + (j+1) + " ";
+
                 if (UnityEngine.Random.Range(0,2) == 1)
                 {
                     //Debug.LogFormat("Contender wins game {0}.", (j + 1));
                     contenderWins[j] = true;
                 }
             }
+
         }
+        Debug.LogFormat("[Schlag den Bomb #{0}] Oddball games = {1}", _moduleId, oddities);
         scoreC = 0;
         scoreB = 0;
         for (int fs = 0; fs < 15; fs++)
@@ -405,64 +422,139 @@ public class qSchlagDenBomb : MonoBehaviour
         bombaScore.text = Convert.ToString(scoreB);
         pressedAllowed = true;
     }
-/*
+
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Press the correct buttons with !{0} press 1 2 3 4 5 with a space in between numbers. You can substitute 'press' with 'p'.";
+    private readonly string TwitchHelpMessage = @"Assign games with !{0} (contestant/bomb/unplayed) 1 2 3 or !{0} (c/b/u) 1 2 3 with a space in between numbers, for example, !{0} u 13 14 15. Submit with !{0} submit.";
     private readonly bool TwitchShouldCancelCommand = false;
 #pragma warning restore 414
 
     private IEnumerator ProcessTwitchCommand(string command)
     {
-        var pieces = command.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        //var pieces = command.Trim().ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        //var presses = command.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
+        var pieces = command.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         string theError;
-
+        /* theError = "sendtochat Pieces I got were, starting with the first one = ";
+        for (int jojo = 0; jojo < pieces.Length; jojo++)
+        {
+            theError = theError + jojo + " was " + pieces[jojo] + ", ";
+        }
+        Debug.Log(theError); */
+        //yield return theError;
         //Debug.Log(pieces.Count());
         //Debug.Log(pieces.Length);
-
-        if (pieces.Count() <= 2)
+        if (pieces.Count() == 0)
         {
-            theError = "sendtochat Not enough arguments! You need at least 'press' or 'p', then one or more numbers, separated by spaces.";
+            theError = "sendtochat Not enough arguments! You need at least 'contestant/bomb/unplayed', 'c/b/u', or 'submit', then one or more numbers, separated by spaces.";
             yield return theError;
         }
-        else if (pieces[1] != "press" && pieces[1] != "p")
+        if (pieces.Count() == 1 && pieces[0] == "submit")
         {
-            theError = "sendtochat You made a boo boo! Command '" + pieces[1] + "' is invalid. You must 'press' or 'p'.";
+            PressedSubmit();
+            yield return null;
+        }
+        if (pieces.Count() == 1 && pieces[0] != "submit")
+        {
+            theError = "sendtochat Not enough arguments! You need at least 'contestant/bomb/unplayed' or 'c/b/u', or 'submit', then one or more numbers, separated by spaces.";
             yield return theError;
         }
-        else if ((pieces.Count() > 2))
+        else if (pieces[0] != "contestant" && pieces[0] != "c" &&
+            pieces[0] != "bomb" && pieces[0] != "b" &&
+            pieces[0] != "unplayed" && pieces[0] != "u" && pieces[0] != "submit"
+            )
         {
-            tpStages = pieces.Length - 2;
+            theError = "sendtochat You made a boo boo! Command '" + pieces[0] + "' is invalid. You must use 'contestant/bomb/unplayed' or 'c/b/u'.";
+            yield return theError;
+        }
+        else if ((pieces.Count() > 1))
+        {
+            tpStages = pieces.Length - 1;
             //Debug.Log(pieces.Length - tpStages);
-            while (tpStages > 0)
+            if (pieces[0] == "contestant" || pieces[0] == "c")
             {
-                if (pieces[pieces.Count() - tpStages] == "1" || pieces[pieces.Count() - tpStages] == "2" || pieces[pieces.Count() - tpStages] == "3" || pieces[pieces.Count() - tpStages] == "4" || pieces[pieces.Count() - tpStages] == "5")
+                while (tpStages > 0)
                 {
-                    OnRelease(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
-                    tpStages--;
+                    yield return new WaitForSeconds(.1f);
+                    var curPiece = Int32.Parse(pieces[pieces.Count() - tpStages]);
 
-                }
-                else
-                {
-                    tpStages = 0;
-                    theError = "sendtochat You made a boo boo! Previous stages entered, but 'press' command '" + pieces[(pieces.Length - tpStages) - 1] + "' is invalid. You must 'press' a number from 1 to 5.";
-                    yield return theError;
-                }
+                    if (curPiece > 0 && curPiece < 16)
+                    {
+                        PressedContender(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
+                        tpStages--;
 
+                    }
+                    else
+                    {
+                        tpStages = 0;
+                        theError = "sendtochat You made a boo boo! 'contestant/c' command '" + pieces[(pieces.Length - tpStages) - 1] + 
+                            "' is invalid. You must use a number from 1 to 15.";
+                        yield return theError;
+                    }
+                    
+                }
             }
+            else if (pieces[0] == "bomb" || pieces[0] == "b")
+            {
+                while (tpStages > 0)
+                {
+                    yield return new WaitForSeconds(.1f);
+                    var curPiece = Int32.Parse(pieces[pieces.Count() - tpStages]);
+
+                    if (curPiece > 0 && curPiece < 16)
+                    {
+                        PressedBomb(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
+                        tpStages--;
+
+                    }
+                    else
+                    {
+                        tpStages = 0;
+                        theError = "sendtochat You made a boo boo! 'bomb/b' command '" + pieces[(pieces.Length - tpStages) - 1] + 
+                            "' is invalid. You must use a number from 1 to 15.";
+                        yield return theError;
+                    }
+                    
+                }
+            }
+            else if (pieces[0] == "unplayed" || pieces[0] == "u")
+            {
+                while (tpStages > 0)
+                {
+                    yield return new WaitForSeconds(.1f);
+                    var curPiece = Int32.Parse(pieces[pieces.Count() - tpStages]);
+
+                    if (curPiece > 11 && curPiece < 16)
+                    {
+                        PressedUnplayed(curPiece - 12);
+                        tpStages--;
+
+                    }
+                    else
+                    {
+                        tpStages = 0;
+                        theError = "sendtochat You made a boo boo! 'unplayed/u' command '" + pieces[(pieces.Length - tpStages) - 1] + 
+                            "' is invalid. You must use a number from 12 to 15 for unplayed games.";
+                        yield return theError;
+                    }
+                }
+            }
+
             yield return null;
         }
         
     }
-    */
     void PressedBomb(int pressedButton)
     {
         curGameState[pressedButton] = "B";
         meshC[pressedButton].material.color = colory[0];
         meshB[pressedButton].material.color = colory[1];
+        buttonsC[pressedButton].GetComponentInChildren<TextMesh>().color = colory[3];
+        buttonsB[pressedButton].GetComponentInChildren<TextMesh>().color = colory[0];
         if (pressedButton > 10)
         {
             meshUn[pressedButton - 11].material.color = colory[0];
+            buttonsU[pressedButton - 11].GetComponentInChildren<TextMesh>().color = colory[1];
         }
     }
 
@@ -471,18 +563,25 @@ public class qSchlagDenBomb : MonoBehaviour
         curGameState[pressedButton] = "C";
         meshB[pressedButton].material.color = colory[0];
         meshC[pressedButton].material.color = colory[1];
+        buttonsB[pressedButton].GetComponentInChildren<TextMesh>().color = colory[2];
+        buttonsC[pressedButton].GetComponentInChildren<TextMesh>().color = colory[0];
         if (pressedButton > 10)
         {
             meshUn[pressedButton - 11].material.color = colory[0];
+            buttonsU[pressedButton - 11].GetComponentInChildren<TextMesh>().color = colory[1];
         }
     }
 
     void PressedUnplayed(int pressedButton)
     {
         curGameState[pressedButton + 11] = "U";
-        meshC[pressedButton + 11].material.color = colory[0];
-        meshB[pressedButton + 11].material.color = colory[0];
         meshUn[pressedButton].material.color = colory[1];
+        meshB[pressedButton + 11].material.color = colory[0];
+        meshC[pressedButton + 11].material.color = colory[0];
+
+        buttonsU[pressedButton].GetComponentInChildren<TextMesh>().color = colory[0];
+        buttonsB[pressedButton + 11].GetComponentInChildren<TextMesh>().color = colory[2];
+        buttonsC[pressedButton + 11].GetComponentInChildren<TextMesh>().color = colory[3];
     }
 
     void PressedSubmit()
