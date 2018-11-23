@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: qSchlagDenBomb
   title: Schlag den Bomb
-  description: 'Schlag den Bomb 1.15
+  description: 'Schlag den Bomb 1.16
 
     I''m not sure if this is easier or harder than adding hundred-digit numbers...
 
@@ -25,6 +25,6 @@ MonoBehaviour:
 
 
     Manual available here: https://ktane.timwi.de/HTML/Schlag%20den%20Bomb.html'
-  version: 1.15
+  version: 1.16
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 3f4018cd2063ae442a9388d0fa20fe31, type: 3}

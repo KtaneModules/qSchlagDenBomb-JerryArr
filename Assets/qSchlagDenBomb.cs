@@ -111,11 +111,21 @@ public class qSchlagDenBomb : MonoBehaviour
             buttonsC[q].GetComponentInChildren<TextMesh>().color = colory[3];
         }
         DumbDelegationThing();
-        buttonSubmit.OnInteractEnded += delegate () { PressedSubmit(); buttonSubmit.AddInteractionPunch(0.4f); };
-        buttonsU[0].OnInteractEnded += delegate () { PressedUnplayed(0); buttonsU[0].AddInteractionPunch(0.2f); };
-        buttonsU[1].OnInteractEnded += delegate () { PressedUnplayed(1); buttonsU[1].AddInteractionPunch(0.2f); };
-        buttonsU[2].OnInteractEnded += delegate () { PressedUnplayed(2); buttonsU[2].AddInteractionPunch(0.2f); };
-        buttonsU[3].OnInteractEnded += delegate () { PressedUnplayed(3); buttonsU[3].AddInteractionPunch(0.2f); };
+
+        buttonSubmit.OnInteract += delegate () { OnPress(); PressedSubmit(); buttonSubmit.AddInteractionPunch(0.4f); return false; };
+
+        buttonsU[0].OnInteract += delegate () { OnPress(); PressedUnplayed(0); buttonsU[0].AddInteractionPunch(0.2f); return false; };
+        buttonsU[1].OnInteract += delegate () { OnPress(); PressedUnplayed(1); buttonsU[1].AddInteractionPunch(0.2f); return false; };
+        buttonsU[2].OnInteract += delegate () { OnPress(); PressedUnplayed(2); buttonsU[2].AddInteractionPunch(0.2f); return false; };
+        buttonsU[3].OnInteract += delegate () { OnPress(); PressedUnplayed(3); buttonsU[3].AddInteractionPunch(0.2f); return false; };
+
+        buttonSubmit.OnInteractEnded += delegate () { OnRelease(); };
+
+        buttonsU[0].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsU[1].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsU[2].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsU[3].OnInteractEnded += delegate () { OnRelease(); };
+
         meshUn[0].material.color = colory[0];
         meshUn[1].material.color = colory[0];
         meshUn[2].material.color = colory[0];
@@ -223,6 +233,7 @@ public class qSchlagDenBomb : MonoBehaviour
         Debug.LogFormat("[Schlag den Bomb #{0}] Phys rating = {1}", _moduleId, curGameTypeNum);
         assignsLeft = 3;
         stepsLeft = 0;
+        inLoop = false;
         while (assignsLeft > 0)
         {
             // 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -259,6 +270,7 @@ public class qSchlagDenBomb : MonoBehaviour
                 contenderWins[currentStep] = true;
             }
             assignsLeft--;
+            inLoop = false;
         }
         curGameTypeNum = (contenderRatings - ((contenderRatings / 100)*100)) / 10;
         Debug.LogFormat("[Schlag den Bomb #{0}] Mental rating = {1}", _moduleId, curGameTypeNum);
@@ -301,6 +313,7 @@ public class qSchlagDenBomb : MonoBehaviour
                 contenderWins[currentStep] = true;
             }
             assignsLeft--;
+            inLoop = false;
         }
         curGameTypeNum = (contenderRatings) - (100 * (contenderRatings / 100)) - (10 * ((contenderRatings - ((contenderRatings / 100) * 100)) / 10));
         Debug.LogFormat("[Schlag den Bomb #{0}] Quiz rating = {1}", _moduleId, curGameTypeNum);
@@ -388,7 +401,7 @@ public class qSchlagDenBomb : MonoBehaviour
         }
         if (scoreC == 60)
         {
-            Debug.LogFormat("[Schlag den Bomb #{0}] 60-60 tie detected, flipping result of first oddball game. (Remember, oddball games need not be exactly what is determined, as long as all selected games total up correctly)", _moduleId);
+            Debug.LogFormat("[Schlag den Bomb #{0}] 60-60 tie detected, flipping result of first oddball game. (Remember, oddball games need not be exactly what is determined, as long as all selected games total up correctly and P/M/Q/U games are correct)", _moduleId);
             bool uhOh = true;
             curGameTypeNum = 0;
             while (uhOh)
@@ -694,7 +707,7 @@ public class qSchlagDenBomb : MonoBehaviour
         GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
     }
 
-    void OnRelease(int pressedButton)
+    void OnRelease()
     {
         GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, transform);
         if (pressedAllowed)
@@ -706,36 +719,67 @@ public class qSchlagDenBomb : MonoBehaviour
     }
     void DumbDelegationThing()
     {
-        buttonsB[0].OnInteractEnded += delegate () { PressedBomb(0); buttonsB[0].AddInteractionPunch(0.2f); };
-        buttonsB[1].OnInteractEnded += delegate () { PressedBomb(1); buttonsB[1].AddInteractionPunch(0.2f); };
-        buttonsB[2].OnInteractEnded += delegate () { PressedBomb(2); buttonsB[2].AddInteractionPunch(0.2f); };
-        buttonsB[3].OnInteractEnded += delegate () { PressedBomb(3); buttonsB[3].AddInteractionPunch(0.2f); };
-        buttonsB[4].OnInteractEnded += delegate () { PressedBomb(4); buttonsB[4].AddInteractionPunch(0.2f); };
-        buttonsB[5].OnInteractEnded += delegate () { PressedBomb(5); buttonsB[5].AddInteractionPunch(0.2f); };
-        buttonsB[6].OnInteractEnded += delegate () { PressedBomb(6); buttonsB[6].AddInteractionPunch(0.2f); };
-        buttonsB[7].OnInteractEnded += delegate () { PressedBomb(7); buttonsB[7].AddInteractionPunch(0.2f); };
-        buttonsB[8].OnInteractEnded += delegate () { PressedBomb(8); buttonsB[8].AddInteractionPunch(0.2f); };
-        buttonsB[9].OnInteractEnded += delegate () { PressedBomb(9); buttonsB[9].AddInteractionPunch(0.2f); };
-        buttonsB[10].OnInteractEnded += delegate () { PressedBomb(10); buttonsB[10].AddInteractionPunch(0.2f); };
-        buttonsB[11].OnInteractEnded += delegate () { PressedBomb(11); buttonsB[11].AddInteractionPunch(0.2f); };
-        buttonsB[12].OnInteractEnded += delegate () { PressedBomb(12); buttonsB[12].AddInteractionPunch(0.2f); };
-        buttonsB[13].OnInteractEnded += delegate () { PressedBomb(13); buttonsB[13].AddInteractionPunch(0.2f); };
-        buttonsB[14].OnInteractEnded += delegate () { PressedBomb(14); buttonsB[14].AddInteractionPunch(0.2f); };
-        buttonsC[0].OnInteractEnded += delegate () { PressedContender(0); buttonsC[0].AddInteractionPunch(0.2f); };
-        buttonsC[1].OnInteractEnded += delegate () { PressedContender(1); buttonsC[1].AddInteractionPunch(0.2f); };
-        buttonsC[2].OnInteractEnded += delegate () { PressedContender(2); buttonsC[2].AddInteractionPunch(0.2f); };
-        buttonsC[3].OnInteractEnded += delegate () { PressedContender(3); buttonsC[3].AddInteractionPunch(0.2f); };
-        buttonsC[4].OnInteractEnded += delegate () { PressedContender(4); buttonsC[4].AddInteractionPunch(0.2f); };
-        buttonsC[5].OnInteractEnded += delegate () { PressedContender(5); buttonsC[5].AddInteractionPunch(0.2f); };
-        buttonsC[6].OnInteractEnded += delegate () { PressedContender(6); buttonsC[6].AddInteractionPunch(0.2f); };
-        buttonsC[7].OnInteractEnded += delegate () { PressedContender(7); buttonsC[7].AddInteractionPunch(0.2f); };
-        buttonsC[8].OnInteractEnded += delegate () { PressedContender(8); buttonsC[8].AddInteractionPunch(0.2f); };
-        buttonsC[9].OnInteractEnded += delegate () { PressedContender(9); buttonsC[9].AddInteractionPunch(0.2f); };
-        buttonsC[10].OnInteractEnded += delegate () { PressedContender(10); buttonsC[10].AddInteractionPunch(0.2f); };
-        buttonsC[11].OnInteractEnded += delegate () { PressedContender(11); buttonsC[11].AddInteractionPunch(0.2f); };
-        buttonsC[12].OnInteractEnded += delegate () { PressedContender(12); buttonsC[12].AddInteractionPunch(0.2f); };
-        buttonsC[13].OnInteractEnded += delegate () { PressedContender(13); buttonsC[13].AddInteractionPunch(0.2f); };
-        buttonsC[14].OnInteractEnded += delegate () { PressedContender(14); buttonsC[14].AddInteractionPunch(0.2f); };
+        buttonsB[0].OnInteract += delegate () { OnPress(); PressedBomb(0); buttonsB[0].AddInteractionPunch(0.2f); return false; };
+        buttonsB[1].OnInteract += delegate () { OnPress(); PressedBomb(1); buttonsB[1].AddInteractionPunch(0.2f); return false; };
+        buttonsB[2].OnInteract += delegate () { OnPress(); PressedBomb(2); buttonsB[2].AddInteractionPunch(0.2f); return false; };
+        buttonsB[3].OnInteract += delegate () { OnPress(); PressedBomb(3); buttonsB[3].AddInteractionPunch(0.2f); return false; };
+        buttonsB[4].OnInteract += delegate () { OnPress(); PressedBomb(4); buttonsB[4].AddInteractionPunch(0.2f); return false; };
+        buttonsB[5].OnInteract += delegate () { OnPress(); PressedBomb(5); buttonsB[5].AddInteractionPunch(0.2f); return false; };
+        buttonsB[6].OnInteract += delegate () { OnPress(); PressedBomb(6); buttonsB[6].AddInteractionPunch(0.2f); return false; };
+        buttonsB[7].OnInteract += delegate () { OnPress(); PressedBomb(7); buttonsB[7].AddInteractionPunch(0.2f); return false; };
+        buttonsB[8].OnInteract += delegate () { OnPress(); PressedBomb(8); buttonsB[8].AddInteractionPunch(0.2f); return false; };
+        buttonsB[9].OnInteract += delegate () { OnPress(); PressedBomb(9); buttonsB[9].AddInteractionPunch(0.2f); return false; };
+        buttonsB[10].OnInteract += delegate () { OnPress(); PressedBomb(10); buttonsB[10].AddInteractionPunch(0.2f); return false; };
+        buttonsB[11].OnInteract += delegate () { OnPress(); PressedBomb(11); buttonsB[11].AddInteractionPunch(0.2f); return false; };
+        buttonsB[12].OnInteract += delegate () { OnPress(); PressedBomb(12); buttonsB[12].AddInteractionPunch(0.2f); return false; };
+        buttonsB[13].OnInteract += delegate () { OnPress(); PressedBomb(13); buttonsB[13].AddInteractionPunch(0.2f); return false; };
+        buttonsB[14].OnInteract += delegate () { OnPress(); PressedBomb(14); buttonsB[14].AddInteractionPunch(0.2f); return false; };
+        buttonsC[0].OnInteract += delegate () { OnPress(); PressedContender(0); buttonsC[0].AddInteractionPunch(0.2f); return false; };
+        buttonsC[1].OnInteract += delegate () { OnPress(); PressedContender(1); buttonsC[1].AddInteractionPunch(0.2f); return false; };
+        buttonsC[2].OnInteract += delegate () { OnPress(); PressedContender(2); buttonsC[2].AddInteractionPunch(0.2f); return false; };
+        buttonsC[3].OnInteract += delegate () { OnPress(); PressedContender(3); buttonsC[3].AddInteractionPunch(0.2f); return false; };
+        buttonsC[4].OnInteract += delegate () { OnPress(); PressedContender(4); buttonsC[4].AddInteractionPunch(0.2f); return false; };
+        buttonsC[5].OnInteract += delegate () { OnPress(); PressedContender(5); buttonsC[5].AddInteractionPunch(0.2f); return false; };
+        buttonsC[6].OnInteract += delegate () { OnPress(); PressedContender(6); buttonsC[6].AddInteractionPunch(0.2f); return false; };
+        buttonsC[7].OnInteract += delegate () { OnPress(); PressedContender(7); buttonsC[7].AddInteractionPunch(0.2f); return false; };
+        buttonsC[8].OnInteract += delegate () { OnPress(); PressedContender(8); buttonsC[8].AddInteractionPunch(0.2f); return false; };
+        buttonsC[9].OnInteract += delegate () { OnPress(); PressedContender(9); buttonsC[9].AddInteractionPunch(0.2f); return false; };
+        buttonsC[10].OnInteract += delegate () { OnPress(); PressedContender(10); buttonsC[10].AddInteractionPunch(0.2f); return false; };
+        buttonsC[11].OnInteract += delegate () { OnPress(); PressedContender(11); buttonsC[11].AddInteractionPunch(0.2f); return false; };
+        buttonsC[12].OnInteract += delegate () { OnPress(); PressedContender(12); buttonsC[12].AddInteractionPunch(0.2f); return false; };
+        buttonsC[13].OnInteract += delegate () { OnPress(); PressedContender(13); buttonsC[13].AddInteractionPunch(0.2f); return false; };
+        buttonsC[14].OnInteract += delegate () { OnPress(); PressedContender(14); buttonsC[14].AddInteractionPunch(0.2f); return false; };
+
+        buttonsB[0].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[1].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[2].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[3].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[4].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[5].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[6].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[7].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[8].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[9].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[10].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[11].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[12].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[13].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsB[14].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[0].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[1].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[2].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[3].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[4].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[5].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[6].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[7].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[8].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[9].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[10].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[11].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[12].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[13].OnInteractEnded += delegate () { OnRelease(); };
+        buttonsC[14].OnInteractEnded += delegate () { OnRelease(); };
 
     }
 }
