@@ -464,8 +464,8 @@ public class qSchlagDenBomb : MonoBehaviour
         }
         if (pieces.Count() == 1 && pieces[0] == "submit")
         {
-            buttonSubmit.OnInteract();
             yield return null;
+            buttonSubmit.OnInteract();
             //buttonSubmit.OnInteract += delegate () { OnPress(); PressedSubmit(); buttonSubmit.AddInteractionPunch(0.4f); return false; };
             //PressedSubmit();
             
@@ -496,8 +496,8 @@ public class qSchlagDenBomb : MonoBehaviour
 
                     if (curPiece > 0 && curPiece < 16)
                     {
-                        buttonsC[curPiece - 1].OnInteract();
                         yield return null;
+                        buttonsC[curPiece - 1].OnInteract();
                         //buttonsC[curPiece].OnInteract += delegate () { OnPress(); PressedContender(curPiece); buttonsC[curPiece].AddInteractionPunch(0.2f); return false; };
                         
                         //PressedContender(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
@@ -523,8 +523,8 @@ public class qSchlagDenBomb : MonoBehaviour
 
                     if (curPiece > 0 && curPiece < 16)
                     {
-                        buttonsB[curPiece - 1].OnInteract();
                         yield return null;
+                        buttonsB[curPiece - 1].OnInteract();
                         //buttonsB[curPiece].OnInteract += delegate () { OnPress(); PressedBomb(curPiece); buttonsB[curPiece].AddInteractionPunch(0.2f); return false; };
 
                         //PressedBomb(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
@@ -550,8 +550,8 @@ public class qSchlagDenBomb : MonoBehaviour
 
                     if (curPiece > 11 && curPiece < 16)
                     {
-                        buttonsU[curPiece - 12].OnInteract();
                         yield return null;
+                        buttonsU[curPiece - 12].OnInteract();
 
                         //buttonsU[curPiece - 12].OnInteract += delegate () { OnPress(); PressedUnplayed(curPiece - 12); buttonsU[curPiece - 12].AddInteractionPunch(0.2f); PressedUnplayed(curPiece - 12);
                         tpStages--;
