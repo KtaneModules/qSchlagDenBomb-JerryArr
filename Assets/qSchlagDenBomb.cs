@@ -459,17 +459,20 @@ public class qSchlagDenBomb : MonoBehaviour
         //Debug.Log(pieces.Length);
         if (pieces.Count() == 0)
         {
-            theError = "sendtochat Not enough arguments! You need at least 'contestant/bomb/unplayed', 'c/b/u', or 'submit', then one or more numbers, separated by spaces.";
+            theError = "sendtochaterror Not enough arguments! You need at least 'contestant/bomb/unplayed', 'c/b/u', or 'submit', then one or more numbers, separated by spaces.";
             yield return theError;
         }
         if (pieces.Count() == 1 && pieces[0] == "submit")
         {
-            PressedSubmit();
+            buttonSubmit.OnInteract();
             yield return null;
+            //buttonSubmit.OnInteract += delegate () { OnPress(); PressedSubmit(); buttonSubmit.AddInteractionPunch(0.4f); return false; };
+            //PressedSubmit();
+            
         }
         if (pieces.Count() == 1 && pieces[0] != "submit")
         {
-            theError = "sendtochat Not enough arguments! You need at least 'contestant/bomb/unplayed' or 'c/b/u', or 'submit', then one or more numbers, separated by spaces.";
+            theError = "sendtochaterror Not enough arguments! You need at least 'contestant/bomb/unplayed' or 'c/b/u', or 'submit', then one or more numbers, separated by spaces.";
             yield return theError;
         }
         else if (pieces[0] != "contestant" && pieces[0] != "c" &&
@@ -477,7 +480,7 @@ public class qSchlagDenBomb : MonoBehaviour
             pieces[0] != "unplayed" && pieces[0] != "u" && pieces[0] != "submit"
             )
         {
-            theError = "sendtochat You made a boo boo! Command '" + pieces[0] + "' is invalid. You must use 'contestant/bomb/unplayed' or 'c/b/u'.";
+            theError = "sendtochaterror You made a boo boo! Command '" + pieces[0] + "' is invalid. You must use 'contestant/bomb/unplayed' or 'c/b/u'.";
             yield return theError;
         }
         else if ((pieces.Count() > 1))
@@ -493,14 +496,18 @@ public class qSchlagDenBomb : MonoBehaviour
 
                     if (curPiece > 0 && curPiece < 16)
                     {
-                        PressedContender(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
+                        buttonsC[curPiece - 1].OnInteract();
+                        yield return null;
+                        //buttonsC[curPiece].OnInteract += delegate () { OnPress(); PressedContender(curPiece); buttonsC[curPiece].AddInteractionPunch(0.2f); return false; };
+                        
+                        //PressedContender(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
                         tpStages--;
 
                     }
                     else
                     {
                         tpStages = 0;
-                        theError = "sendtochat You made a boo boo! 'contestant/c' command '" + pieces[(pieces.Length - tpStages) - 1] + 
+                        theError = "sendtochaterror You made a boo boo! 'contestant/c' command '" + pieces[(pieces.Length - tpStages) - 1] + 
                             "' is invalid. You must use a number from 1 to 15.";
                         yield return theError;
                     }
@@ -516,14 +523,18 @@ public class qSchlagDenBomb : MonoBehaviour
 
                     if (curPiece > 0 && curPiece < 16)
                     {
-                        PressedBomb(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
+                        buttonsB[curPiece - 1].OnInteract();
+                        yield return null;
+                        //buttonsB[curPiece].OnInteract += delegate () { OnPress(); PressedBomb(curPiece); buttonsB[curPiece].AddInteractionPunch(0.2f); return false; };
+
+                        //PressedBomb(Int32.Parse(pieces[pieces.Count() - tpStages]) - 1);
                         tpStages--;
 
                     }
                     else
                     {
                         tpStages = 0;
-                        theError = "sendtochat You made a boo boo! 'bomb/b' command '" + pieces[(pieces.Length - tpStages) - 1] + 
+                        theError = "sendtochaterror You made a boo boo! 'bomb/b' command '" + pieces[(pieces.Length - tpStages) - 1] + 
                             "' is invalid. You must use a number from 1 to 15.";
                         yield return theError;
                     }
@@ -539,14 +550,17 @@ public class qSchlagDenBomb : MonoBehaviour
 
                     if (curPiece > 11 && curPiece < 16)
                     {
-                        PressedUnplayed(curPiece - 12);
+                        buttonsU[curPiece - 12].OnInteract();
+                        yield return null;
+
+                        //buttonsU[curPiece - 12].OnInteract += delegate () { OnPress(); PressedUnplayed(curPiece - 12); buttonsU[curPiece - 12].AddInteractionPunch(0.2f); PressedUnplayed(curPiece - 12);
                         tpStages--;
 
                     }
                     else
                     {
                         tpStages = 0;
-                        theError = "sendtochat You made a boo boo! 'unplayed/u' command '" + pieces[(pieces.Length - tpStages) - 1] + 
+                        theError = "sendtochaterror You made a boo boo! 'unplayed/u' command '" + pieces[(pieces.Length - tpStages) - 1] + 
                             "' is invalid. You must use a number from 12 to 15 for unplayed games.";
                         yield return theError;
                     }
