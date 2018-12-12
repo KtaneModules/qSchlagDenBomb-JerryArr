@@ -425,6 +425,7 @@ public class qSchlagDenBomb : MonoBehaviour
                         }
                     }
                 }
+                curGameTypeNum++;
             }
         }
         Debug.LogFormat("[Schlag den Bomb #{0}] Final score: Contender {1} - {2} Bomb. Contender {3}.", _moduleId, scoreC, scoreB, scoreC > 60 ? "wins" : "loses");
