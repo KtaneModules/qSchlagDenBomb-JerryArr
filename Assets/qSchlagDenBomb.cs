@@ -358,76 +358,60 @@ public class qSchlagDenBomb : MonoBehaviour
             assignsLeft--;
         }
         //Debug.LogFormat("Game order: ");
+        bool uhOh = true;
         string oddities = "";
-        for (int j = 0; j < 15; j++)
+        while (uhOh)
         {
-            //Debug.LogFormat("Game {0} is {1}", ((j + 1)), gameType[j]);
-            // Debug.LogFormat("Game {0} is {1}", (j + 1); gameType[j]);
-            //Debug.Log("Game " + (j + 1) + " is " + gameType[j]);
-            if (gameType[j] == "O")
+            uhOh = false;
+            for (int j = 0; j < 15; j++)
             {
-                oddities = oddities + (j+1) + " ";
-
-                if (UnityEngine.Random.Range(0,2) == 1)
+                //Debug.LogFormat("Game {0} is {1}", ((j + 1)), gameType[j]);
+                // Debug.LogFormat("Game {0} is {1}", (j + 1); gameType[j]);
+                //Debug.Log("Game " + (j + 1) + " is " + gameType[j]);
+                if (gameType[j] == "O")
                 {
-                    //Debug.LogFormat("Contender wins game {0}.", (j + 1));
-                    contenderWins[j] = true;
-                }
-            }
+                    oddities = oddities + (j + 1) + " ";
 
-        }
-        Debug.LogFormat("[Schlag den Bomb #{0}] Oddball games = {1}", _moduleId, oddities);
-        scoreC = 0;
-        scoreB = 0;
-        for (int fs = 0; fs < 15; fs++)
-        {
-            if (scoreC > 60 || scoreB > 60)
-            {
-                unplayedGames[fs] = true;
-                Debug.LogFormat("[Schlag den Bomb #{0}] Game number {1} is unplayed.", _moduleId, fs+1);
-                realUnplayed = realUnplayed + (1 + fs) + " ";
-                //Debug.Log(realUnplayed);
-            }
-            else if (contenderWins[fs])
-            {
-                scoreC = scoreC + 1 + fs;
-                //Debug.Log("Contender score " + scoreC);
-            }
-            else
-            {
-                scoreB = scoreB + 1 + fs;
-                //Debug.Log("Bomb score " + scoreB);
-            }
-        }
-        if (scoreC == 60)
-        {
-            Debug.LogFormat("[Schlag den Bomb #{0}] 60-60 tie detected, flipping result of first oddball game. (Remember, oddball games need not be exactly what is determined, as long as all selected games total up correctly and P/M/Q/U games are correct)", _moduleId);
-            bool uhOh = true;
-            curGameTypeNum = 0;
-            while (uhOh)
-            {
-                if (gameType[curGameTypeNum] == "O")
-                {
-                    contenderWins[curGameTypeNum] = !contenderWins[curGameTypeNum];
-                    Debug.LogFormat("[Schlag den Bomb #{0}] Game number {1} result flipped, contestant wins this game = {2}", _moduleId, curGameTypeNum + 1, contenderWins[curGameTypeNum]);
-                    uhOh = false;
-                    scoreC = 0;
-                    scoreB = 0;
-                    for (int fs = 0; fs < 15; fs++)
+                    if (UnityEngine.Random.Range(0, 2) == 1)
                     {
-                        if (contenderWins[fs])
-                        {
-                            scoreC = scoreC + 1 + fs;
-                        }
-                        else
-                        {
-                            scoreB = scoreB + 1 + fs;
-                        }
+                        //Debug.LogFormat("Contender wins game {0}.", (j + 1));
+                        contenderWins[j] = true;
                     }
                 }
-                curGameTypeNum++;
+
             }
+            Debug.LogFormat("[Schlag den Bomb #{0}] Oddball games = {1}", _moduleId, oddities);
+            oddities = "";
+            scoreC = 0;
+            scoreB = 0;
+            for (int fs = 0; fs < 15; fs++)
+            {
+                if (scoreC > 60 || scoreB > 60)
+                {
+                    unplayedGames[fs] = true;
+                    Debug.LogFormat("[Schlag den Bomb #{0}] Game number {1} is unplayed.", _moduleId, fs + 1);
+                    realUnplayed = realUnplayed + (1 + fs) + " ";
+                    //Debug.Log(realUnplayed);
+                }
+                else if (contenderWins[fs])
+                {
+                    scoreC = scoreC + 1 + fs;
+                    //Debug.Log("Contender score " + scoreC);
+                }
+                else
+                {
+                    scoreB = scoreB + 1 + fs;
+                    //Debug.Log("Bomb score " + scoreB);
+                }
+            }
+            if (scoreC == 60)
+            {
+                Debug.LogFormat("[Schlag den Bomb #{0}] 60-60 tie detected, trying again.", _moduleId);
+                uhOh = true;
+            }
+
         }
+        
         Debug.LogFormat("[Schlag den Bomb #{0}] Final score: Contender {1} - {2} Bomb. Contender {3}.", _moduleId, scoreC, scoreB, scoreC > 60 ? "wins" : "loses");
         TextMesh contyScore = contenderScore.GetComponent<TextMesh>();
         TextMesh bombaScore = bombScore.GetComponent<TextMesh>();
