@@ -25,9 +25,9 @@ public class qSchlagDenBomb : MonoBehaviour
 
     string[] gameType = new string[15];
     string[] contender = new string[27] 
-        { "RON", "DON", "JULIA", "CORY", "GREG", "PAULA", "VAL", "LISA", "OZY",
-        "OZZY", "ELSA", "CORI", "HARRY", "GALE", "DANIEL", "ALBERT", "SPIKE", "TOMMY",
-        "GRETA", "TINA", "ROB", "EDGAR", "JULIE", "PETER", "MILLIE", "ISOLDE", "ERIS"};
+        { "Ron", "Don", "Julia", "Cory", "Greg", "Paula", "Val", "Lisa", "Ozy",
+        "Ozzy", "Elsa", "Cori", "Harry", "Gale", "Daniel", "Albert", "Spike", "Tommy",
+        "Greta", "Tina", "Rob", "Edgar", "Julia", "Peter", "Millie", "Isolde", "Eris"};
     // Physical, Mental, Quiz
     int[] ratings = new int[27]
       { 000, 001, 002, 010, 011, 012, 020, 021, 022,
@@ -68,6 +68,7 @@ public class qSchlagDenBomb : MonoBehaviour
     int scoreB;
     bool[] contenderWins = new bool[15];
     string[] curGameState = new string[15];
+    string contestantName = "";
 
     private static int _moduleIdCounter = 1;
     private int _moduleId;
@@ -78,6 +79,7 @@ public class qSchlagDenBomb : MonoBehaviour
     int[] snValue = new int[6];
 
     bool pressedAllowed = false;
+    bool isSolved = false;
 
     string[] testCharacters = new string[10]
     {
@@ -164,8 +166,8 @@ public class qSchlagDenBomb : MonoBehaviour
         //TextMesh contenderText = c.GetComponentInChildren<TextMesh>();
 
         TextMesh contenderText = contenderName.GetComponent<TextMesh>();
-
-        contenderText.text = contender[contenderNumber];
+        contenderText.text = contender[contenderNumber].ToUpperInvariant();
+        contestantName = contender[contenderNumber];
         contenderRatings = ratings[contenderNumber];
         Debug.LogFormat("[Schlag den Bomb #{0}] Contender name is {1}. Ports = {2}, Batteries = {3}, Indicators = {4} (Over 6/5/3 counts as 6/5/3)", _moduleId, 
             contender[contenderNumber], numPorts, numBatteries, numIndicators);
@@ -263,10 +265,9 @@ public class qSchlagDenBomb : MonoBehaviour
             }
 
             gameType[currentStep] = "P";
-            Debug.LogFormat("[Schlag den Bomb #{0}] Game {1} is now a P.", _moduleId, currentStep + 1);
+            Debug.LogFormat("[Schlag den Bomb #{0}] Game {1} is now a Physical game.{2}", _moduleId, currentStep + 1, 3 - assignsLeft < curGameTypeNum ? " Contender wins." : "");
             if (3 - assignsLeft < curGameTypeNum)
             {
-                Debug.LogFormat("[Schlag den Bomb #{0}] Contender wins game {1}.", _moduleId, currentStep + 1);
                 contenderWins[currentStep] = true;
             }
             assignsLeft--;
@@ -306,10 +307,9 @@ public class qSchlagDenBomb : MonoBehaviour
             }
 
             gameType[currentStep] = "M";
-            Debug.LogFormat("[Schlag den Bomb #{0}] Game {1} is now an M.", _moduleId, currentStep + 1);
+            Debug.LogFormat("[Schlag den Bomb #{0}] Game {1} is now a Mental game.{2}", _moduleId, currentStep + 1, 3 - assignsLeft < curGameTypeNum ? " Contender wins." : "");
             if (3 - assignsLeft < curGameTypeNum)
             {
-                Debug.LogFormat("[Schlag den Bomb #{0}] Contender wins game {1}.", _moduleId, currentStep + 1);
                 contenderWins[currentStep] = true;
             }
             assignsLeft--;
@@ -349,10 +349,9 @@ public class qSchlagDenBomb : MonoBehaviour
             }
 
             gameType[currentStep] = "Q";
-            Debug.LogFormat("[Schlag den Bomb #{0}] Game {1} is now a Q.", _moduleId, currentStep + 1);
+            Debug.LogFormat("[Schlag den Bomb #{0}] Game {1} is now a Quiz game.{2}", _moduleId, currentStep + 1, 3 - assignsLeft < curGameTypeNum ? " Contender wins." : "");
             if (3 - assignsLeft < curGameTypeNum)
             {
-                Debug.LogFormat("[Schlag den Bomb #{0}] Contender wins game {1}.", _moduleId, currentStep + 1);
                 contenderWins[currentStep] = true;
             }
             assignsLeft--;
@@ -391,7 +390,6 @@ public class qSchlagDenBomb : MonoBehaviour
                     unplayedGames[fs] = true;
                     Debug.LogFormat("[Schlag den Bomb #{0}] Game number {1} is unplayed.", _moduleId, fs + 1);
                     realUnplayed = realUnplayed + (1 + fs) + " ";
-                    //Debug.Log(realUnplayed);
                 }
                 else if (contenderWins[fs])
                 {
@@ -411,8 +409,21 @@ public class qSchlagDenBomb : MonoBehaviour
             }
 
         }
-        
+        var potentialSolution = "One potential solution: ";
+        for (int cg = 0; cg < 15; cg++)
+        {
+            if (contenderWins[cg] && !unplayedGames[cg])
+            {
+                potentialSolution = potentialSolution + "" + (cg + 1) + ", ";
+            }
+            else if (unplayedGames[cg])
+            {
+                potentialSolution = potentialSolution + "game " + (cg + 1) + " unplayed, ";
+            }
+        }
+        potentialSolution = potentialSolution + "and that's it!";
         Debug.LogFormat("[Schlag den Bomb #{0}] Final score: Contender {1} - {2} Bomb. Contender {3}.", _moduleId, scoreC, scoreB, scoreC > 60 ? "wins" : "loses");
+        Debug.LogFormat("[Schlag den Bomb #{0}] {1}", _moduleId, potentialSolution);
         TextMesh contyScore = contenderScore.GetComponent<TextMesh>();
         TextMesh bombaScore = bombScore.GetComponent<TextMesh>();
 
@@ -661,6 +672,32 @@ public class qSchlagDenBomb : MonoBehaviour
                     }
                     Debug.LogFormat("[Schlag den Bomb #{0}] Richtig! Module defused! One moment in time...", _moduleId);
                     pressedAllowed = false;
+                    if (bomb.GetSolvableModuleNames().Where(x => "Souvenir".Contains(x)).Count() > -10)
+                    {
+                        for (int pb = 0; pb < 15; pb++)
+                        {
+                            curGameState[pb] = "C";
+                            meshB[pb].material.color = colory[0];
+                            meshC[pb].material.color = colory[1];
+                            buttonsB[pb].GetComponentInChildren<TextMesh>().color = colory[2];
+                            buttonsC[pb].GetComponentInChildren<TextMesh>().color = colory[0];
+                            if (pb > 10)
+                            {
+                                meshUn[pb - 11].material.color = colory[0];
+                                buttonsU[pb - 11].GetComponentInChildren<TextMesh>().color = colory[1];
+                            }
+                        }
+
+
+                        TextMesh contenderText = contenderName.GetComponent<TextMesh>();
+                        contenderText.text = "CONT.";
+                        TextMesh contyScore = contenderScore.GetComponent<TextMesh>();
+                        TextMesh bombaScore = bombScore.GetComponent<TextMesh>();
+                        contyScore.text = "?";
+                        bombaScore.text = "?";
+                    }
+
+                    isSolved = true;
                     GetComponent<KMBombModule>().HandlePass();
                     GetComponent<KMAudio>().PlaySoundAtTransform("OneMomentInTime", transform);
                     return;

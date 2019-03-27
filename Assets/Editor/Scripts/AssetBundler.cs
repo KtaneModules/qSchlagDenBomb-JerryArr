@@ -97,7 +97,7 @@ public class AssetBundler
 
         bundler.assemblyName = ModConfig.ID;
         bundler.outputFolder = ModConfig.OutputFolder + "/" + bundler.assemblyName;
-        if (System.Environment.OSVersion.Platform == PlatformID.MacOSX) bundler.target = BuildTarget.StandaloneOSXUniversal;
+        if (System.Environment.OSVersion.Platform == PlatformID.MacOSX) bundler.target = BuildTarget.StandaloneOSX;
 
         bool success = false;
 
