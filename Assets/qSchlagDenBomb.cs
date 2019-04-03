@@ -27,7 +27,7 @@ public class qSchlagDenBomb : MonoBehaviour
     string[] contender = new string[27] 
         { "Ron", "Don", "Julia", "Cory", "Greg", "Paula", "Val", "Lisa", "Ozy",
         "Ozzy", "Elsa", "Cori", "Harry", "Gale", "Daniel", "Albert", "Spike", "Tommy",
-        "Greta", "Tina", "Rob", "Edgar", "Julia", "Peter", "Millie", "Isolde", "Eris"};
+        "Greta", "Tina", "Rob", "Edgar", "Julie", "Peter", "Millie", "Isolde", "Eris"};
     // Physical, Mental, Quiz
     int[] ratings = new int[27]
       { 000, 001, 002, 010, 011, 012, 020, 021, 022,
@@ -672,7 +672,7 @@ public class qSchlagDenBomb : MonoBehaviour
                     }
                     Debug.LogFormat("[Schlag den Bomb #{0}] Richtig! Module defused! One moment in time...", _moduleId);
                     pressedAllowed = false;
-                    if (bomb.GetSolvableModuleNames().Where(x => "Souvenir".Contains(x)).Count() > -10)
+                    if (bomb.GetSolvableModuleNames().Where(x => "Souvenir".Contains(x)).Count() > 0)
                     {
                         for (int pb = 0; pb < 15; pb++)
                         {
